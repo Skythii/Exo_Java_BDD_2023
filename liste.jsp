@@ -2,23 +2,33 @@
 <%@ include file="task_class.jsp" %>
 
 <%
-    List<Task> tasks;
+    // Réinitialisation manuelle (via URL ?reset=true)
+    if ("true".equals(request.getParameter("reset"))) {
+        session.invalidate();
+        response.sendRedirect("liste.jsp");
+        return;
+    }
 
-    // Sécurité anti-erreurs de cast (au cas où session contient des objets corrompus)
+    // Récupération brute
+    List tasksRaw = (List) session.getAttribute("tasks");
+    List<Task> tasks = new ArrayList<>();
+
     try {
-        tasks = (List<Task>) session.getAttribute("tasks");
+        if (tasksRaw != null) {
+            for (Object o : tasksRaw) {
+                tasks.add((Task) o);
+            }
+        }
     } catch (Exception e) {
         session.invalidate();
         response.sendRedirect("liste.jsp");
         return;
     }
 
-    if (tasks == null) {
-        tasks = new ArrayList<>();
-        session.setAttribute("tasks", tasks);
-    }
+    // Stockage propre en session (corrigé)
+    session.setAttribute("tasks", tasks);
 
-    // Traitement des actions : supprimer ou marquer comme terminée
+    // Traitement des actions
     String action = request.getParameter("action");
     String indexStr = request.getParameter("index");
 
@@ -52,14 +62,4 @@
     <div style="border:1px solid #ccc; margin:10px; padding:10px; border-radius:8px;">
         <strong><%= t.getTitle() %></strong> - 
         <%= t.isDone() ? "✔️ Terminée" : "⏳ En cours" %><br>
-        <em>Description :</em> <%= t.getDescription() %><br>
-        <em>Échéance :</em> <%= t.getDueDate() %><br><br>
-        <a href="liste.jsp?action=done&index=<%= i %>">✅ Marquer comme terminée</a> |
-        <a href="liste.jsp?action=delete&index=<%= i %>">🗑️ Supprimer</a>
-    </div>
-<%
-        }
-    }
-%>
-
-<p><a href="ajout.jsp">➕ Ajouter une nouvelle tâche</a></p>
+        <em>Description :</em> <%= t.getDescription() %><
