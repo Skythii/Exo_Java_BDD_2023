@@ -2,7 +2,7 @@
 <%@ include file="task_class.jsp" %>
 
 <%
-    // Récupération brute depuis session
+    // Récupération des tâches stockées dans la session
     List tasksRaw = (List) session.getAttribute("tasks");
     List<Task> tasks = new ArrayList<>();
 
@@ -18,7 +18,7 @@
         return;
     }
 
-    // Traitement de l'ajout de tâche
+    // Traitement du formulaire
     String title = request.getParameter("title");
     String description = request.getParameter("description");
     String dueDate = request.getParameter("dueDate");
@@ -34,11 +34,16 @@
 %>
 
 <h2>Ajouter une tâche</h2>
-<form method="post">
-    Titre : <input type="text" name="title" required><br><br>
-    Description : <br>
-    <textarea name="description" rows="4" cols="50"></textarea><br><br>
-    Date d’échéance : <input type="date" name="dueDate"><br><br>
+<form method="post" action="ajout.jsp">
+    <label for="title">Titre :</label>
+    <input type="text" id="title" name="title" required><br><br>
+
+    <label for="description">Description :</label><br>
+    <textarea id="description" name="description" rows="4" cols="50"></textarea><br><br>
+
+    <label for="dueDate">Date d’échéance :</label>
+    <input type="date" id="dueDate" name="dueDate"><br><br>
+
     <input type="submit" value="Ajouter">
 </form>
 
