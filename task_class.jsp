@@ -13,9 +13,15 @@
         }
 
         public String getTitle() { return title; }
+
         public String getDescription() { return description; }
+
         public String getDueDate() { return dueDate; }
+
         public boolean isDone() { return isDone; }
-        public void setDone(boolean done) { this.isDone = done; }
+
+        public void setDone(boolean done) {
+            this.isDone = done;
+        }
     }
 %>
