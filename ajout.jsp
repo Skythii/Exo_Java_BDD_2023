@@ -2,12 +2,23 @@
 <%@ include file="task_class.jsp" %>
 
 <%
-    List<Task> tasks = (List<Task>) session.getAttribute("tasks");
-    if (tasks == null) {
-        tasks = new ArrayList<>();
-        session.setAttribute("tasks", tasks);
+    // Récupération brute depuis session
+    List tasksRaw = (List) session.getAttribute("tasks");
+    List<Task> tasks = new ArrayList<>();
+
+    try {
+        if (tasksRaw != null) {
+            for (Object o : tasksRaw) {
+                tasks.add((Task) o);
+            }
+        }
+    } catch (Exception e) {
+        session.invalidate();
+        response.sendRedirect("ajout.jsp");
+        return;
     }
 
+    // Traitement de l'ajout de tâche
     String title = request.getParameter("title");
     String description = request.getParameter("description");
     String dueDate = request.getParameter("dueDate");
@@ -15,6 +26,7 @@
     if (title != null && !title.isEmpty()) {
         Task t = new Task(title, description, dueDate);
         tasks.add(t);
+        session.setAttribute("tasks", tasks);
 %>
         <p style="color: green;">✅ Tâche "<strong><%= title %></strong>" ajoutée avec succès !</p>
 <%
