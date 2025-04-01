@@ -46,4 +46,4 @@
     Date d’échéance : <input type="date" name="dueDate"><br>
     <input type="submit" value="Ajouter">
 </form>
-<a href="list.jsp">Voir les tâches</a>
+<a href="liste.jsp">Voir les tâches</a>
