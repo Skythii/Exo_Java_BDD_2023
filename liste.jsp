@@ -1,26 +1,5 @@
 <%@ page import="java.util.*" %>
-
-<%! 
-    public class Task {
-        private String title;
-        private String description;
-        private String dueDate;
-        private boolean isDone;
-
-        public Task(String title, String description, String dueDate) {
-            this.title = title;
-            this.description = description;
-            this.dueDate = dueDate;
-            this.isDone = false;
-        }
-
-        public String getTitle() { return title; }
-        public String getDescription() { return description; }
-        public String getDueDate() { return dueDate; }
-        public boolean isDone() { return isDone; }
-        public void setDone(boolean done) { this.isDone = done; }
-    }
-%>
+<%@ include file="task_class.jsp" %>
 
 <%
     List<Task> tasks = (List<Task>) session.getAttribute("tasks");
@@ -29,17 +8,22 @@
         session.setAttribute("tasks", tasks);
     }
 
+    // Traitement des actions (supprimer ou marquer comme terminée)
     String action = request.getParameter("action");
     String indexStr = request.getParameter("index");
 
     if (action != null && indexStr != null) {
-        int index = Integer.parseInt(indexStr);
-        if (index < tasks.size()) {
-            if ("delete".equals(action)) {
-                tasks.remove(index);
-            } else if ("done".equals(action)) {
-                tasks.get(index).setDone(true);
+        try {
+            int index = Integer.parseInt(indexStr);
+            if (index >= 0 && index < tasks.size()) {
+                if ("delete".equals(action)) {
+                    tasks.remove(index);
+                } else if ("done".equals(action)) {
+                    tasks.get(index).setDone(true);
+                }
             }
+        } catch (NumberFormatException e) {
+            out.println("<p style='color:red;'>Index invalide</p>");
         }
     }
 %>
@@ -55,16 +39,17 @@
         for (int i = 0; i < tasks.size(); i++) {
             Task t = tasks.get(i);
 %>
-    <div style="border:1px solid #ccc; margin:10px; padding:10px;">
-        <strong><%= t.getTitle() %></strong> - <%= t.isDone() ? "✔️ Terminée" : "⏳ En cours" %><br>
-        Description : <%= t.getDescription() %><br>
-        Échéance : <%= t.getDueDate() %><br>
-        <a href="list.jsp?action=done&index=<%= i %>">Marquer comme terminée</a> |
-        <a href="list.jsp?action=delete&index=<%= i %>">Supprimer</a>
+    <div style="border:1px solid #ccc; margin:10px; padding:10px; border-radius:8px;">
+        <strong><%= t.getTitle() %></strong> - 
+        <%= t.isDone() ? "✔️ Terminée" : "⏳ En cours" %><br>
+        <em>Description :</em> <%= t.getDescription() %><br>
+        <em>Échéance :</em> <%= t.getDueDate() %><br><br>
+        <a href="liste.jsp?action=done&index=<%= i %>">✅ Marquer comme terminée</a> |
+        <a href="liste.jsp?action=delete&index=<%= i %>">🗑️ Supprimer</a>
     </div>
 <%
         }
     }
 %>
 
-<a href="ajout.jsp">Ajouter une nouvelle tâche</a>
+<p><a href="ajout.jsp">➕ Ajouter une nouvelle tâche</a></p>
