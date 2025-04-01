@@ -4,7 +4,7 @@
 <%
     List<Task> tasks;
 
-    // Sécurité : tenter de récupérer la liste, sinon reset session
+    // Sécurité anti-erreurs de cast (au cas où session contient des objets corrompus)
     try {
         tasks = (List<Task>) session.getAttribute("tasks");
     } catch (Exception e) {
@@ -49,3 +49,17 @@
         for (int i = 0; i < tasks.size(); i++) {
             Task t = tasks.get(i);
 %>
+    <div style="border:1px solid #ccc; margin:10px; padding:10px; border-radius:8px;">
+        <strong><%= t.getTitle() %></strong> - 
+        <%= t.isDone() ? "✔️ Terminée" : "⏳ En cours" %><br>
+        <em>Description :</em> <%= t.getDescription() %><br>
+        <em>Échéance :</em> <%= t.getDueDate() %><br><br>
+        <a href="liste.jsp?action=done&index=<%= i %>">✅ Marquer comme terminée</a> |
+        <a href="liste.jsp?action=delete&index=<%= i %>">🗑️ Supprimer</a>
+    </div>
+<%
+        }
+    }
+%>
+
+<p><a href="ajout.jsp">➕ Ajouter une nouvelle tâche</a></p>
